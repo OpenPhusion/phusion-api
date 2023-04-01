@@ -1,0 +1,62 @@
+[
+    {
+        "id": "01",
+        "desc": "Receive orders",
+        "type": "endpoint",
+        "direction": "in",
+        "app": "AppCharger",
+        "endpoint": "ReceiveChargeOrder",
+        "connection": "LuyaoChargerConn"
+    },
+    {
+        "id": "02",
+        "desc": "Generate coupon for parking",
+        "type": "processor",
+        "subtype": "javascript",
+        "script": "/data/luyao/code.js",
+        "from": "01"
+    },
+    {
+        "id": "03",
+        "desc": "Send coupon for parking",
+        "type": "endpoint",
+        "direction": "out",
+        "app": "AppParking",
+        "endpoint": "SendParkingCoupon",
+        "connection": "LuyaoParkingConn",
+        "from": "02",
+        "config": {"callLimitPerSecond": 100}
+    },
+    {
+        "id": "04",
+        "desc": "Compose response message",
+        "type": "processor",
+        "subtype": "javascript",
+        "script": "/data/luyao/code.js",
+        "async": true,
+        "from": ["01", "02", "03"]
+    },
+    {
+        "id": "05",
+        "type": "forEach",
+        "from": "04"
+    },
+    {
+        "id": "06",
+        "type": "direct",
+        "msg": {"text": "hello"},
+        "from": "05"
+    },
+    {
+        "id": "07",
+        "type": "collect",
+        "from": "06"
+    },
+    {
+        "id": "exception",
+        "desc": "Exception",
+        "type": "processor",
+        "subtype": "javascript",
+        "script": "/data/luyao/code.js"
+    }
+]

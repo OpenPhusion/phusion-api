@@ -560,7 +560,9 @@ public abstract class HttpBaseApplication implements Application, HttpServer {
                 String key;
                 while (keys.hasMoreElements()) {
                     key = keys.nextElement();
-                    if (connectionId.equals(integraionToConnMap.get(key))) {
+
+                    // "startsWith" is not accurate enough, it may match the wrong endpoint, e.g. order and orderList
+                    if (key.startsWith(endpointId) && connectionId.equals(integraionToConnMap.get(key))) {
                         arr.add( key.substring(len) );
                     }
                 }
